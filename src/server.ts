@@ -10,10 +10,15 @@ import {
   jsonSchemaTransform,
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { createLeadAthletesRight, getLeadAthletesRightById } from "./routes/athletes-rights";
+
+import {
+  createLeadAthletesRight,
+  getLeadAthletesRightById,
+} from "./routes/athletes-rights";
 import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
 
 import { errorHandler } from "./error-handler";
+import { env } from "./env";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -48,6 +53,6 @@ app.register(getLeadRetiredById);
 
 app.setErrorHandler(errorHandler);
 
-app.listen({ port: 3333, host: "0.0.0.0" }).then(() => {
+app.listen({ port: env.PORT }).then(() => {
   console.log("HTTP server running!");
 });
