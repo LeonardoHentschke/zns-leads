@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: zns-leads-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zns_leads
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - zns-leads-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  zns-leads-network:
+    driver: bridge

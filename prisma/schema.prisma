@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model AthletesRights {
+  id                       Int      @id @default(autoincrement())
+  name                     String?
+  phone                    String?
+  is_registered_clt        Boolean?
+  had_injury_during_career Boolean?
+  injury_description       String?
+  injury_timing            String?
+  utm_source               String?
+  utm_medium               String?
+  utm_campaign             String?
+  utm_content              String?
+  utm_term                 String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Retired {
+  id                Int      @id @default(autoincrement())
+  name              String?
+  phone             String?
+  percentage        String?
+  gender            String?
+  birth_date        String?
+  contribution_time String?
+  is_unhealthy      Boolean?
+  is_military       Boolean?
+  utm_source        String?
+  utm_medium        String?
+  utm_campaign      String?
+  utm_content       String?
+  utm_term          String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
