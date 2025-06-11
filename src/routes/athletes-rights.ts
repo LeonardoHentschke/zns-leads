@@ -6,7 +6,7 @@ import { BadRequest } from "./_errors/bad-request";
 
 export async function createLeadAthletesRight(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    "/athletes-rights",
+    "/api/athletes-rights",
     {
       schema: {
         summary: "Cadastro",
@@ -73,7 +73,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
 
 export async function getLeadAthletesRightById(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    "/athletes-rights/:id",
+    "/api/athletes-rights/:id",
     {
       schema: {
         summary: "Buscar por ID",

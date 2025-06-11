@@ -3,6 +3,7 @@ import fastify from "fastify";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 import fastifyCors from "@fastify/cors";
+import fastifyBearerAuth from "@fastify/bearer-auth";
 
 import {
   serializerCompiler,
@@ -19,11 +20,17 @@ import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
 
 import { errorHandler } from "./error-handler";
 import { env } from "./env";
+import { authenticate } from "./auth";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.register(fastifyCors, {
   origin: "*",
+});
+
+app.register(fastifyBearerAuth, {
+  keys: new Set([env.API_TOKEN]),
+  addHook: false,
 });
 
 app.register(fastifySwagger, {
@@ -35,6 +42,15 @@ app.register(fastifySwagger, {
       description: "",
       version: "1.0.0",
     },
+    securityDefinitions: {
+      bearerAuth: {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+        description: 'Digite: Bearer {seu-token}'
+      }
+    },
+    security: [{ bearerAuth: [] }]
   },
   transform: jsonSchemaTransform,
 });
@@ -46,10 +62,14 @@ app.register(fastifySwaggerUI, {
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-app.register(createLeadAthletesRight);
-app.register(getLeadAthletesRightById);
-app.register(createLeadRetired);
-app.register(getLeadRetiredById);
+app.register(async function protectedRoutes(fastify) {
+  fastify.addHook('preHandler', authenticate);
+  
+  await fastify.register(createLeadAthletesRight);
+  await fastify.register(getLeadAthletesRightById);
+  await fastify.register(createLeadRetired);
+  await fastify.register(getLeadRetiredById);
+});
 
 app.setErrorHandler(errorHandler);
 
