@@ -3,6 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { BadRequest } from "./_errors/bad-request";
+import { WebhookService } from "../lib/webhook";
 
 export async function createLeadRetired(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -67,6 +68,10 @@ export async function createLeadRetired(app: FastifyInstance) {
             utm_content: request.body.utm_content,
             utm_term: request.body.utm_term,
           },
+        });
+
+        WebhookService.sendRetiredWebhook(retired).catch((error) => {
+          console.error("Erro ao enviar webhook de aposentado:", error);
         });
 
         return reply.status(201).send(retired);

@@ -1,82 +1,122 @@
-# pass.in
+# ZNS Leads
 
-O pass.in é uma aplicação de **gestão de participantes em eventos presenciais**. 
+Sistema de gestão de leads para aposentadoria e direito dos atletas.
 
-A ferramenta permite que o organizador cadastre um evento e abra uma página pública de inscrição.
+## Funcionalidades
 
-Os participantes inscritos podem emitir uma credencial para check-in no dia do evento.
+- [x] Cadastro de leads de aposentadoria
+- [x] Cadastro de leads de direito dos atletas
+- [x] Consulta de leads por ID
+- [x] Emissão de webhooks após cadastro bem-sucedido
+- [x] Documentação Swagger da API
 
-O sistema fará um scan da credencial do participante para permitir a entrada no evento.
+## Webhooks
 
-## Requisitos
+O sistema emite webhooks automaticamente quando um lead é cadastrado com sucesso no banco de dados. 
 
-### Requisitos funcionais
+### Configuração
 
-- [x] O organizador deve poder cadastrar um novo evento;
-- [x] O organizador deve poder visualizar dados de um evento;
-- [x] O organizador deve poser visualizar a lista de participantes; 
-- [x] O participante deve poder se inscrever em um evento;
-- [x] O participante deve poder visualizar seu crachá de inscrição;
-- [x] O participante deve poder realizar check-in no evento;
+Configure as URLs dos webhooks nas variáveis de ambiente:
 
-### Regras de negócio
+```bash
+# Para leads de aposentadoria
+WEBHOOK_RETIRED_URL=https://exemplo.com/webhooks/aposentados
 
-- [x] O participante só pode se inscrever em um evento uma única vez;
-- [x] O participante só pode se inscrever em eventos com vagas disponíveis;
-- [x] O participante só pode realizar check-in em um evento uma única vez;
+# Para leads de direito dos atletas  
+WEBHOOK_ATHLETES_RIGHTS_URL=https://exemplo.com/webhooks/direito-atletas
+```
 
-### Requisitos não-funcionais
+### Formato dos Webhooks
 
-- [x] O check-in no evento será realizado através de um QRCode;
+Os webhooks são enviados via POST com o seguinte formato JSON:
 
-## Documentação da API (Swagger)
+```json
+{
+  "type": "retired" | "athletes-rights",
+  "data": {
+    "id": 123,
+    "name": "João Silva",
+    "phone": "(11) 99999-9999",
+    // ... outros campos do lead
+    "created_at": "2025-06-12T10:30:00Z",
+    "updated_at": "2025-06-12T10:30:00Z"
+  },
+  "timestamp": "2025-06-12T10:30:00Z"
+}
+```
 
-Para documentação da API, acesse o link: https://nlw-unite-nodejs.onrender.com/docs
+### Headers
 
-## Banco de dados
+- `Content-Type: application/json`
+- `User-Agent: ZNS-Leads-Webhook/1.0`
 
-Nessa aplicação vamos utilizar banco de dados relacional (SQL). Para ambiente de desenvolvimento seguiremos com o SQLite pela facilidade do ambiente.
+### Timeout e Tratamento de Erros
 
-### Diagrama ERD
+- Timeout de 10 segundos
+- Erros de webhook não interrompem o fluxo principal
+- Logs de erro são registrados no console
 
-<img src=".github/erd.svg" width="600" alt="Diagrama ERD do banco de dados" />
+## Documentação da API
 
-### Estrutura do banco (SQL)
+Para acessar a documentação Swagger, execute o projeto e acesse: `http://localhost:3000/docs`
 
-```sql
--- CreateTable
-CREATE TABLE "events" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "title" TEXT NOT NULL,
-    "details" TEXT,
-    "slug" TEXT NOT NULL,
-    "maximum_attendees" INTEGER
-);
+## Desenvolvimento
 
--- CreateTable
-CREATE TABLE "attendees" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "event_id" TEXT NOT NULL,
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "attendees_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
+### Pré-requisitos
 
--- CreateTable
-CREATE TABLE "check_ins" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "attendeeId" INTEGER NOT NULL,
-    CONSTRAINT "check_ins_attendeeId_fkey" FOREIGN KEY ("attendeeId") REFERENCES "attendees" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
+- Node.js 18+
+- PostgreSQL
+- Docker (opcional)
 
--- CreateIndex
-CREATE UNIQUE INDEX "events_slug_key" ON "events"("slug");
+### Instalação
 
--- CreateIndex
-CREATE UNIQUE INDEX "attendees_event_id_email_key" ON "attendees"("event_id", "email");
+```bash
+```bash
+# Clone o repositório
+git clone <url-do-repositorio>
+cd zns-leads
 
--- CreateIndex
-CREATE UNIQUE INDEX "check_ins_attendeeId_key" ON "check_ins"("attendeeId");
+# Instale as dependências
+npm install
+
+# Configure as variáveis de ambiente
+cp .env.example .env
+# Edite o arquivo .env com suas configurações
+
+# Execute as migrações do banco
+npm run db:migrate
+
+# Inicie o servidor de desenvolvimento
+npm run dev
+```
+
+### Comandos Disponíveis
+
+```bash
+# Desenvolvimento
+npm run dev          # Inicia servidor em modo de desenvolvimento
+npm run build        # Build da aplicação
+npm start           # Inicia servidor em produção
+
+# Banco de dados
+npm run db:migrate  # Executa migrações
+npm run db:studio   # Abre Prisma Studio
+```
+
+## Estrutura do Projeto
+
+```
+src/
+├── lib/
+│   ├── prisma.ts     # Cliente Prisma
+│   └── webhook.ts    # Serviço de webhooks
+├── routes/
+│   ├── retired.ts           # Rotas de aposentadoria
+│   ├── athletes-rights.ts   # Rotas de direito dos atletas
+│   └── _errors/
+│       └── bad-request.ts   # Tratamento de erros
+├── auth.ts           # Autenticação Bearer
+├── env.ts           # Validação de variáveis de ambiente
+├── error-handler.ts # Manipulador global de erros
+└── server.ts        # Configuração do servidor Fastify
 ```

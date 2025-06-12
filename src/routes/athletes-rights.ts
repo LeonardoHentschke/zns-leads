@@ -3,6 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { BadRequest } from "./_errors/bad-request";
+import { WebhookService } from "../lib/webhook";
 
 export async function createLeadAthletesRight(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -62,6 +63,15 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
             utm_term: request.body.utm_term,
           },
         });
+
+        WebhookService.sendAthletesRightsWebhook(athleteRight).catch(
+          (error) => {
+            console.error(
+              "Erro ao enviar webhook de direito dos atletas:",
+              error
+            );
+          }
+        );
 
         return reply.status(201).send(athleteRight);
       } catch (error) {

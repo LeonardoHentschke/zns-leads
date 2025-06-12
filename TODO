@@ -1,3 +1,4 @@
-- Emitir webhook
+- [x] Emitir webhook
 - Logs
 - Definição formato dos campos
+- Tabela com requisições raw
