@@ -2,3 +2,7 @@
 - Logs
 - Definição formato dos campos
 - Tabela com requisições raw
+- Novas colunas nas tabelas
+    - athletesrights = ip,  btnWpp
+    - retired = ip, device, score, data de concessão do beneficio
+
