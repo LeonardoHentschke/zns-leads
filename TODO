@@ -1,7 +1,7 @@
 - [x] Emitir webhook
-- [x] Logs
-- Definição formato dos campos
-- Tabela com requisições raw
+- [ ] Logs
+- [ ] Definição formato dos campos
+- [x] Tabela com requisições raw
 - [x] Novas colunas nas tabelas
   - athletesrights = ip, btnWpp
   - retired = ip, device, score, data de concessão do beneficio
