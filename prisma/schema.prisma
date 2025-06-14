@@ -21,26 +21,32 @@ model AthletesRights {
   utm_campaign             String?
   utm_content              String?
   utm_term                 String?
+  clicked_whatsapp_button  Boolean?
+  webhook_sent             Boolean?
+  ip                       String?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
 
 model Retired {
-  id                Int      @id @default(autoincrement())
-  name              String?
-  phone             String?
-  percentage        String?
-  gender            String?
-  birth_date        String?
-  contribution_time String?
-  is_unhealthy      Boolean?
-  is_military       Boolean?
-  utm_source        String?
-  utm_medium        String?
-  utm_campaign      String?
-  utm_content       String?
-  utm_term          String?
+  id                       Int       @id @default(autoincrement())
+  name                     String?
+  phone                    String?
+  score                    String?
+  gender                   String?
+  birth_date               String?
+  contribution_time        String?
+  is_unhealthy             Boolean?
+  is_military              Boolean?
+  utm_source               String?
+  utm_medium               String?
+  utm_campaign             String?
+  utm_content              String?
+  utm_term                 String?
+  ip                       String?
+  device                   String?
+  date_benefit_was_granted DateTime?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
