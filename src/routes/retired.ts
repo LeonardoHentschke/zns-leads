@@ -4,6 +4,8 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { BadRequest } from "./_errors/bad-request";
 import { WebhookService } from "../lib/webhook";
+import { ScoreCalculatorService } from "../services/score-calculator";
+import { BenefitDateCalculatorService } from "../services/benefit-date-calculator";
 
 export async function createLeadRetired(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -16,10 +18,9 @@ export async function createLeadRetired(app: FastifyInstance) {
         body: z.object({
           name: z.string().optional(),
           phone: z.string().optional(),
-          percentage: z.string().optional(),
-          gender: z.string().optional(),
-          birth_date: z.string().optional(),
-          contribution_time: z.string().optional(),
+          gender: z.string(),
+          birth_date: z.coerce.date(),
+          contribution_time: z.string(),
           is_unhealthy: z.boolean().optional(),
           is_military: z.boolean().optional(),
           utm_source: z.string().optional(),
@@ -27,13 +28,15 @@ export async function createLeadRetired(app: FastifyInstance) {
           utm_campaign: z.string().optional(),
           utm_content: z.string().optional(),
           utm_term: z.string().optional(),
+          ip: z.string().ip().optional(),
+          device: z.string().optional(),
         }),
         response: {
           201: z.object({
             id: z.number(),
             name: z.string().nullable(),
             phone: z.string().nullable(),
-            percentage: z.string().nullable(),
+            score: z.string().nullable(),
             gender: z.string().nullable(),
             birth_date: z.string().nullable(),
             contribution_time: z.string().nullable(),
@@ -44,6 +47,9 @@ export async function createLeadRetired(app: FastifyInstance) {
             utm_campaign: z.string().nullable(),
             utm_content: z.string().nullable(),
             utm_term: z.string().nullable(),
+            device: z.string().nullable(),
+            ip: z.string().nullable(),
+            date_benefit_was_granted: z.date().nullable(),
             created_at: z.date(),
             updated_at: z.date(),
           }),
@@ -52,11 +58,24 @@ export async function createLeadRetired(app: FastifyInstance) {
     },
     async (request, reply) => {
       try {
+        const calculatedScore = ScoreCalculatorService.calculateScore({
+          gender: request.body.gender,
+          birth_date: request.body.birth_date,
+          contribution_time: request.body.contribution_time,
+        });
+
+        const calculatedBenefitDate =
+          BenefitDateCalculatorService.calculateBenefitDate({
+            gender: request.body.gender,
+            birth_date: request.body.birth_date,
+            contribution_time: request.body.contribution_time,
+          });
+
         const retired = await prisma.retired.create({
           data: {
             name: request.body.name,
             phone: request.body.phone,
-            percentage: request.body.percentage,
+            score: calculatedScore,
             gender: request.body.gender,
             birth_date: request.body.birth_date,
             contribution_time: request.body.contribution_time,
@@ -67,6 +86,9 @@ export async function createLeadRetired(app: FastifyInstance) {
             utm_campaign: request.body.utm_campaign,
             utm_content: request.body.utm_content,
             utm_term: request.body.utm_term,
+            ip: request.body.ip,
+            device: request.body.device,
+            date_benefit_was_granted: calculatedBenefitDate,
           },
         });
 
@@ -98,7 +120,7 @@ export async function getLeadRetiredById(app: FastifyInstance) {
             id: z.number(),
             name: z.string().nullable(),
             phone: z.string().nullable(),
-            percentage: z.string().nullable(),
+            score: z.string().nullable(),
             gender: z.string().nullable(),
             birth_date: z.string().nullable(),
             contribution_time: z.string().nullable(),
@@ -109,6 +131,9 @@ export async function getLeadRetiredById(app: FastifyInstance) {
             utm_campaign: z.string().nullable(),
             utm_content: z.string().nullable(),
             utm_term: z.string().nullable(),
+            device: z.string().nullable(),
+            ip: z.string().nullable(),
+            date_benefit_was_granted: z.date().nullable(),
             created_at: z.date(),
             updated_at: z.date(),
           }),

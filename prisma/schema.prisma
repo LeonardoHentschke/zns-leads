@@ -24,9 +24,8 @@ model AthletesRights {
   clicked_whatsapp_button  Boolean?
   webhook_sent             Boolean?
   ip                       String?
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
 }
 
 model Retired {
@@ -35,7 +34,7 @@ model Retired {
   phone                    String?
   score                    String?
   gender                   String?
-  birth_date               String?
+  birth_date               DateTime?
   contribution_time        String?
   is_unhealthy             Boolean?
   is_military              Boolean?
@@ -47,7 +46,6 @@ model Retired {
   ip                       String?
   device                   String?
   date_benefit_was_granted DateTime?
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at               DateTime  @default(now())
+  updated_at               DateTime  @updatedAt
 }
