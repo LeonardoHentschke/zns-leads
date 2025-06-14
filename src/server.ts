@@ -13,7 +13,10 @@ import {
 } from "fastify-type-provider-zod";
 import { env } from "./env";
 import { authenticate } from "./auth";
-import { requestLoggerHook } from "./middleware/request-logger";
+import {
+  requestLoggerHook,
+  errorLoggerHook,
+} from "./middleware/request-logger";
 
 import {
   createLeadAthletesRight,
@@ -68,6 +71,19 @@ app.register(async function protectedRoutes(fastify) {
   await fastify.register(getLeadAthletesRightById);
   await fastify.register(createLeadRetired);
   await fastify.register(getLeadRetiredById);
+});
+
+app.setErrorHandler(async (error, request, reply) => {
+  try {
+    await errorLoggerHook(request, reply, error);
+  } catch (logError) {
+    console.error("Erro ao registrar detalhes do erro:", logError);
+  }
+
+  const statusCode = error.statusCode || 400;
+  reply.status(statusCode).send({
+    message: error.message,
+  });
 });
 
 app.listen({ port: env.PORT }).then(() => {
