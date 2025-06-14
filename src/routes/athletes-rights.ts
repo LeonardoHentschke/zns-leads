@@ -16,8 +16,8 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
         body: z.object({
           name: z.string().optional(),
           phone: z.string().optional(),
-          is_registered_clt: z.boolean().optional(),
-          had_injury_during_career: z.boolean().optional(),
+          is_registered_clt: z.boolean(),
+          had_injury_during_career: z.boolean(),
           injury_description: z.string().optional(),
           injury_timing: z.string().optional(),
           utm_source: z.string().optional(),
@@ -67,6 +67,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
             utm_term: request.body.utm_term,
             clicked_whatsapp_button: request.body.clicked_whatsapp_button,
             ip: request.body.ip,
+            webhook_sent: false,
           },
         });
 
@@ -78,6 +79,11 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
             );
           }
         );
+
+        await prisma.athletesRights.update({
+          where: { id: athleteRight.id },
+          data: { webhook_sent: true },
+        });
 
         return reply.status(201).send(athleteRight);
       } catch (error) {

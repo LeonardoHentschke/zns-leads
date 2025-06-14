@@ -26,6 +26,8 @@ model AthletesRights {
   ip                       String?
   created_at               DateTime @default(now())
   updated_at               DateTime @updatedAt
+
+  @@map("athletes_rights")
 }
 
 model Retired {
@@ -46,6 +48,9 @@ model Retired {
   ip                       String?
   device                   String?
   date_benefit_was_granted DateTime?
+  webhook_sent             Boolean?
   created_at               DateTime  @default(now())
   updated_at               DateTime  @updatedAt
+
+  @@map("retired")
 }
