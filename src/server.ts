@@ -11,7 +11,6 @@ import {
   jsonSchemaTransform,
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { errorHandler } from "./error-handler";
 import { env } from "./env";
 import { authenticate } from "./auth";
 import { requestLoggerHook } from "./middleware/request-logger";
@@ -24,9 +23,7 @@ import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
-app.register(fastifyCors, {
-  origin: "*",
-});
+app.register(fastifyCors);
 
 app.register(fastifyBearerAuth, {
   keys: new Set([env.API_TOKEN]),
@@ -72,8 +69,6 @@ app.register(async function protectedRoutes(fastify) {
   await fastify.register(createLeadRetired);
   await fastify.register(getLeadRetiredById);
 });
-
-app.setErrorHandler(errorHandler);
 
 app.listen({ port: env.PORT }).then(() => {
   console.log("HTTP server running!");
