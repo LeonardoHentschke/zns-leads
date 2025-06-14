@@ -17,10 +17,12 @@ import {
   getLeadAthletesRightById,
 } from "./routes/athletes-rights";
 import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
+import { getRequestLogs, getRequestLogById } from "./routes/request-logs";
 
 import { errorHandler } from "./error-handler";
 import { env } from "./env";
 import { authenticate } from "./auth";
+import { requestLoggerHook } from "./middleware/request-logger";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -61,6 +63,8 @@ app.register(fastifySwaggerUI, {
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
+
+app.addHook('preHandler', requestLoggerHook);
 
 app.register(async function protectedRoutes(fastify) {
   fastify.addHook('preHandler', authenticate);
