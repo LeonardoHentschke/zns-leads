@@ -11,18 +11,16 @@ import {
   jsonSchemaTransform,
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
+import { errorHandler } from "./error-handler";
+import { env } from "./env";
+import { authenticate } from "./auth";
+import { requestLoggerHook } from "./middleware/request-logger";
 
 import {
   createLeadAthletesRight,
   getLeadAthletesRightById,
 } from "./routes/athletes-rights";
 import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
-import { getRequestLogs, getRequestLogById } from "./routes/request-logs";
-
-import { errorHandler } from "./error-handler";
-import { env } from "./env";
-import { authenticate } from "./auth";
-import { requestLoggerHook } from "./middleware/request-logger";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -46,13 +44,13 @@ app.register(fastifySwagger, {
     },
     securityDefinitions: {
       bearerAuth: {
-        type: 'apiKey',
-        name: 'Authorization',
-        in: 'header',
-        description: 'Digite: Bearer {seu-token}'
-      }
+        type: "apiKey",
+        name: "Authorization",
+        in: "header",
+        description: "Digite: Bearer {seu-token}",
+      },
     },
-    security: [{ bearerAuth: [] }]
+    security: [{ bearerAuth: [] }],
   },
   transform: jsonSchemaTransform,
 });
@@ -64,11 +62,11 @@ app.register(fastifySwaggerUI, {
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-app.addHook('preHandler', requestLoggerHook);
+app.addHook("preHandler", requestLoggerHook);
 
 app.register(async function protectedRoutes(fastify) {
-  fastify.addHook('preHandler', authenticate);
-  
+  fastify.addHook("preHandler", authenticate);
+
   await fastify.register(createLeadAthletesRight);
   await fastify.register(getLeadAthletesRightById);
   await fastify.register(createLeadRetired);

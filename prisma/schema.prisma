@@ -56,15 +56,18 @@ model Retired {
 }
 
 model RequestLog {
-  id           Int      @id @default(autoincrement())
-  method       String
-  url          String
-  headers      Json?
-  body         Json?
-  query_params Json?
-  ip           String?
-  user_agent   String?
-  created_at   DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  method        String
+  url           String
+  headers       Json?
+  body          Json?
+  query_params  Json?
+  ip            String?
+  user_agent    String?
+  status_code   Int?
+  error_message String?
+  error_details Json?
+  created_at    DateTime @default(now())
 
   @@map("request_logs")
 }
