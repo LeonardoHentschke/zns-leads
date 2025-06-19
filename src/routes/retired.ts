@@ -30,6 +30,7 @@ export async function createLeadRetired(app: FastifyInstance) {
           utm_term: z.string().optional(),
           ip: z.string().ip().optional(),
           device: z.string().optional(),
+          pages_visited: z.record(z.string(), z.string()).optional(),
         }),
         response: {
           201: z.object({
@@ -38,7 +39,7 @@ export async function createLeadRetired(app: FastifyInstance) {
             phone: z.string().nullable(),
             score: z.string().nullable(),
             gender: z.string().nullable(),
-            birth_date: z.string().nullable(),
+            birth_date: z.date().nullable(),
             contribution_time: z.string().nullable(),
             is_unhealthy: z.boolean().nullable(),
             is_military: z.boolean().nullable(),
@@ -52,6 +53,7 @@ export async function createLeadRetired(app: FastifyInstance) {
             date_benefit_was_granted: z.date().nullable(),
             created_at: z.date(),
             updated_at: z.date(),
+            pages_visited: z.any().nullable(),
           }),
         },
       },
@@ -75,7 +77,7 @@ export async function createLeadRetired(app: FastifyInstance) {
           data: {
             name: request.body.name,
             phone: request.body.phone,
-            score: calculatedScore,
+            score: calculatedScore.toString(),
             gender: request.body.gender,
             birth_date: request.body.birth_date,
             contribution_time: request.body.contribution_time,
@@ -89,6 +91,7 @@ export async function createLeadRetired(app: FastifyInstance) {
             ip: request.body.ip,
             device: request.body.device,
             date_benefit_was_granted: calculatedBenefitDate,
+            pages_visited: request.body.pages_visited,
           },
         });
 
@@ -122,7 +125,7 @@ export async function getLeadRetiredById(app: FastifyInstance) {
             phone: z.string().nullable(),
             score: z.string().nullable(),
             gender: z.string().nullable(),
-            birth_date: z.string().nullable(),
+            birth_date: z.date().nullable(),
             contribution_time: z.string().nullable(),
             is_unhealthy: z.boolean().nullable(),
             is_military: z.boolean().nullable(),
@@ -136,6 +139,7 @@ export async function getLeadRetiredById(app: FastifyInstance) {
             date_benefit_was_granted: z.date().nullable(),
             created_at: z.date(),
             updated_at: z.date(),
+            pages_visited: z.any().nullable(),
           }),
           404: z.object({
             message: z.string(),

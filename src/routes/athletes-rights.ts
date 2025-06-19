@@ -32,6 +32,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
           utm_content: z.string().optional(),
           utm_term: z.string().optional(),
           clicked_whatsapp_button: z.boolean().optional(),
+          pages_visited: z.record(z.string(), z.string()).optional(),
           ip: z.string().optional(),
         }),
         response: {
@@ -50,6 +51,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
             utm_term: z.string().nullable(),
             clicked_whatsapp_button: z.boolean().nullable(),
             ip: z.string().nullable(),
+            pages_visited: z.any().nullable(),
             created_at: z.date(),
             updated_at: z.date(),
           }),
@@ -73,6 +75,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
             utm_term: request.body.utm_term,
             clicked_whatsapp_button: request.body.clicked_whatsapp_button,
             ip: request.body.ip,
+            pages_visited: request.body.pages_visited,
             webhook_sent: false,
           },
         });
@@ -126,6 +129,7 @@ export async function getLeadAthletesRightById(app: FastifyInstance) {
             utm_term: z.string().nullable(),
             clicked_whatsapp_button: z.boolean().nullable(),
             ip: z.string().nullable(),
+            pages_visited: z.any().nullable(),
             created_at: z.date(),
             updated_at: z.date(),
           }),
