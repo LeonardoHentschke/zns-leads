@@ -60,6 +60,16 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
     },
     async (request, reply) => {
       try {
+        const clientIp =
+          request.body.ip ||
+          request.headers["x-forwarded-for"] ||
+          request.headers["x-real-ip"] ||
+          request.socket.remoteAddress ||
+          request.ip;
+
+        const ip =
+          typeof clientIp === "string" ? clientIp : clientIp?.[0] || null;
+
         const athleteRight = await prisma.athletesRights.create({
           data: {
             name: request.body.name,
@@ -74,7 +84,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
             utm_content: request.body.utm_content,
             utm_term: request.body.utm_term,
             clicked_whatsapp_button: request.body.clicked_whatsapp_button,
-            ip: request.body.ip,
+            ip: ip,
             pages_visited: request.body.pages_visited,
             webhook_sent: false,
           },
@@ -128,6 +138,7 @@ export async function getLeadAthletesRightById(app: FastifyInstance) {
             utm_content: z.string().nullable(),
             utm_term: z.string().nullable(),
             clicked_whatsapp_button: z.boolean().nullable(),
+            webhook_sent: z.boolean().nullable(),
             ip: z.string().nullable(),
             pages_visited: z.any().nullable(),
             created_at: z.date(),
