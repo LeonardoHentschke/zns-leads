@@ -1,0 +1,111 @@
+# Dependências
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de ambiente local
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Arquivos de build local
+dist/
+build/
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory usado por ferramentas como istanbul
+coverage/
+*.lcov
+
+# Diretório de dependências npm
+.npm
+
+# Diretório de cache do eslint
+.eslintcache
+
+# Cache do Microbundle
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Cache do REPL
+.node_repl_history
+
+# Saída do 'npm pack'
+*.tgz
+
+# Arquivo de integridade do Yarn
+.yarn-integrity
+
+# Arquivos de ambiente dotenv
+.env.test
+
+# Cache do parcel-bundler
+.cache
+.parcel-cache
+
+# Saída do Next.js build
+.next
+
+# Saída do Nuxt.js build
+.nuxt
+
+# Arquivos gerados pelo Gatsby
+.cache/
+public
+
+# Arquivos gerados pelo Vuepress
+.vuepress/dist
+
+# Diretório de dependências do Serverless
+.serverless/
+
+# Arquivo de cache do FuseBox
+.fusebox/
+
+# Arquivos locais do DynamoDB
+.dynamodb/
+
+# Arquivo de porta do TernJS
+.tern-port
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Desenvolvimento
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups
+backups/
+
+# README e documentação
+README.md
+TODO
+docs/

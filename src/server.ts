@@ -26,6 +26,11 @@ import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
+// Health check endpoint
+app.get("/health", async (request, reply) => {
+  return { status: "ok", timestamp: new Date().toISOString() };
+});
+
 app.register(fastifyCors);
 
 app.register(fastifyBearerAuth, {
