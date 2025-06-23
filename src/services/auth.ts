@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { env } from "./env";
+import { env } from "../env";
 
 const VALID_TOKENS = new Set([env.API_TOKEN]);
 

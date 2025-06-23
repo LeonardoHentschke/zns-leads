@@ -2,8 +2,7 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
-import { BadRequest } from "./_errors/bad-request";
-import { WebhookService } from "../lib/webhook";
+import { WebhookService } from "../services/webhook";
 
 export async function createLeadAthletesRight(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -106,7 +105,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
 
         return reply.status(201).send(athleteRight);
       } catch (error) {
-        throw new BadRequest("Erro ao criar lead de direito dos atletas");
+        throw new Error("Erro ao criar lead de direito dos atletas");
       }
     }
   );
@@ -166,7 +165,7 @@ export async function getLeadAthletesRightById(app: FastifyInstance) {
 
         return reply.status(200).send(athleteRight);
       } catch (error) {
-        throw new BadRequest("Erro ao buscar lead de direito dos atletas");
+        throw new Error("Erro ao buscar lead de direito dos atletas");
       }
     }
   );

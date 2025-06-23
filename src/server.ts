@@ -12,7 +12,7 @@ import {
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { env } from "./env";
-import { authenticate } from "./auth";
+import { authenticate } from "./services/auth";
 import {
   requestLoggerHook,
   errorLoggerHook,
@@ -26,8 +26,7 @@ import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
-// Health check endpoint
-app.get("/health", async (request, reply) => {
+app.get("/health", async () => {
   return { status: "ok", timestamp: new Date().toISOString() };
 });
 

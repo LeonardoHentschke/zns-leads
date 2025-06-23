@@ -2,8 +2,7 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
-import { BadRequest } from "./_errors/bad-request";
-import { WebhookService } from "../lib/webhook";
+import { WebhookService } from "../services/webhook";
 import { ScoreCalculatorService } from "../services/score-calculator";
 import { BenefitDateCalculatorService } from "../services/benefit-date-calculator";
 
@@ -101,7 +100,7 @@ export async function createLeadRetired(app: FastifyInstance) {
 
         return reply.status(201).send(retired);
       } catch (error) {
-        throw new BadRequest("Erro ao criar lead de aposentadoria");
+        throw new Error("Erro ao criar lead de aposentadoria");
       }
     }
   );
@@ -163,7 +162,7 @@ export async function getLeadRetiredById(app: FastifyInstance) {
 
         return reply.status(200).send(retired);
       } catch (error) {
-        throw new BadRequest("Erro ao buscar lead de aposentadoria");
+        throw new Error("Erro ao buscar lead de aposentadoria");
       }
     }
   );
