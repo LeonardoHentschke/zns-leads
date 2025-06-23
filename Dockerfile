@@ -58,7 +58,7 @@ COPY --from=deps --chown=nodeuser:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodeuser:nodejs /app/prisma ./prisma/
 
 # Copiar aplicação buildada
-COPY --from=builder --chown=nodeuser:nodejs /app/dist ./dist/
+COPY --from=builder --chown=nodeuser:nodejs /app/build ./build/
 
 # Copiar package.json para ter acesso aos scripts
 COPY --chown=nodeuser:nodejs package.json ./
