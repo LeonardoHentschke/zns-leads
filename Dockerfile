@@ -7,7 +7,8 @@ WORKDIR /app
 # Instalar dependências do sistema necessárias para o Prisma e outras bibliotecas nativas
 RUN apk add --no-cache \
     openssl \
-    libc6-compat
+    libc6-compat \
+    postgresql-client
 
 # ===============================
 # Estágio de dependências
@@ -63,6 +64,10 @@ COPY --from=builder --chown=nodeuser:nodejs /app/build ./build/
 # Copiar package.json para ter acesso aos scripts
 COPY --chown=nodeuser:nodejs package.json ./
 
+# Garantir permissões corretas antes de gerar o Prisma Client
+RUN chown -R nodeuser:nodejs /app/node_modules
+RUN chmod -R 755 /app/node_modules
+
 # Gerar o Prisma Client para produção
 RUN npx prisma generate
 
@@ -81,8 +86,22 @@ COPY --chown=nodeuser:nodejs <<EOF /app/start.sh
 #!/bin/sh
 set -e
 
-echo "🔄 Executando migrations do Prisma..."
-npx prisma migrate deploy
+echo "🔄 Aguardando PostgreSQL ficar disponível..."
+until pg_isready -h postgres -p 5432 -U \$POSTGRES_USER 2>/dev/null; do
+  echo "Aguardando database..."
+  sleep 2
+done
+
+echo "🔄 Verificando se as migrações são necessárias..."
+if npx prisma migrate status | grep -q "Database schema is not up to date"; then
+  echo "🔄 Executando migrations do Prisma..."
+  npx prisma migrate deploy
+else
+  echo "✅ Database já está atualizado com as migrações"
+fi
+
+echo "🔄 Sincronizando schema do Prisma..."
+npx prisma db push --accept-data-loss || echo "Schema já está sincronizado"
 
 echo "🚀 Iniciando aplicação..."
 exec npm start
@@ -98,4 +117,4 @@ CMD ["/app/start.sh"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3333/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+  CMD node -e "require('http').get('http://localhost:${PORT}/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
