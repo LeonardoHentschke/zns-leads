@@ -15,14 +15,8 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
         body: z.object({
           name: z.string().optional(),
           phone: z.string().optional(),
-          is_registered_clt: z.boolean({
-            message:
-              "O campo 'is_registered_clt' deve ser um valor booleano (true ou false)",
-          }),
-          had_injury_during_career: z.boolean({
-            message:
-              "O campo 'had_injury_during_career' deve ser um valor booleano (true ou false)",
-          }),
+          is_registered_clt: z.boolean().optional(),
+          had_injury_during_career: z.boolean().optional(),
           injury_description: z.string().optional(),
           injury_timing: z.string().optional(),
           utm_source: z.string().optional(),
