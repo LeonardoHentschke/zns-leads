@@ -82,35 +82,31 @@ ENV NODE_ENV=production
 ENV PORT=3333
 
 # Script de inicialização que executa migrations e inicia a aplicação
-COPY --chown=nodeuser:nodejs <<EOF /app/start.sh
-#!/bin/sh
-set -e
+RUN echo '#!/bin/sh\n\
+set -e\n\
+\n\
+echo "🔄 Aguardando PostgreSQL ficar disponível..."\n\
+until pg_isready -h postgres -p 5432 -U $POSTGRES_USER 2>/dev/null; do\n\
+  echo "Aguardando database..."\n\
+  sleep 2\n\
+done\n\
+\n\
+echo "🔄 Verificando se as migrações são necessárias..."\n\
+if npx prisma migrate status | grep -q "Database schema is not up to date"; then\n\
+  echo "🔄 Executando migrations do Prisma..."\n\
+  npx prisma migrate deploy\n\
+else\n\
+  echo "✅ Database já está atualizado com as migrações"\n\
+fi\n\
+\n\
+echo "🔄 Sincronizando schema do Prisma..."\n\
+npx prisma db push --accept-data-loss || echo "Schema já está sincronizado"\n\
+\n\
+echo "🚀 Iniciando aplicação..."\n\
+exec npm start' > /app/start.sh
 
-echo "🔄 Aguardando PostgreSQL ficar disponível..."
-until pg_isready -h postgres -p 5432 -U \$POSTGRES_USER 2>/dev/null; do
-  echo "Aguardando database..."
-  sleep 2
-done
-
-echo "🔄 Verificando se as migrações são necessárias..."
-if npx prisma migrate status | grep -q "Database schema is not up to date"; then
-  echo "🔄 Executando migrations do Prisma..."
-  npx prisma migrate deploy
-else
-  echo "✅ Database já está atualizado com as migrações"
-fi
-
-echo "🔄 Sincronizando schema do Prisma..."
-npx prisma db push --accept-data-loss || echo "Schema já está sincronizado"
-
-echo "🚀 Iniciando aplicação..."
-exec npm start
-EOF
-
-# Tornar o script executável
-USER root
-RUN chmod +x /app/start.sh
-USER nodeuser
+# Tornar o script executável e ajustar permissões
+RUN chmod +x /app/start.sh && chown nodeuser:nodejs /app/start.sh
 
 # Comando de inicialização
 CMD ["/app/start.sh"]
