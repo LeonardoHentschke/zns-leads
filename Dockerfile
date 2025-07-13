@@ -71,17 +71,7 @@ RUN chmod -R 755 /app/node_modules
 # Gerar o Prisma Client para produção
 RUN npx prisma generate
 
-# Mudar para usuário não-root
-USER nodeuser
-
-# Expor a porta que a aplicação usa
-EXPOSE 3333
-
-# Variáveis de ambiente padrão
-ENV NODE_ENV=production
-ENV PORT=3333
-
-# Script de inicialização que executa migrations e inicia a aplicação
+# Script de inicialização que executa migrations e inicia a aplicação (criar como root)
 RUN echo '#!/bin/sh\n\
 set -e\n\
 \n\
@@ -107,6 +97,16 @@ exec npm start' > /app/start.sh
 
 # Tornar o script executável e ajustar permissões
 RUN chmod +x /app/start.sh && chown nodeuser:nodejs /app/start.sh
+
+# Mudar para usuário não-root
+USER nodeuser
+
+# Expor a porta que a aplicação usa
+EXPOSE 3333
+
+# Variáveis de ambiente padrão
+ENV NODE_ENV=production
+ENV PORT=3333
 
 # Comando de inicialização
 CMD ["/app/start.sh"]
