@@ -8,7 +8,9 @@ WORKDIR /app
 RUN apk add --no-cache \
     openssl \
     libc6-compat \
-    postgresql-client
+    postgresql-client \
+    bind-tools \
+    netcat-openbsd
 
 # ===============================
 # Estágio de dependências
@@ -71,32 +73,9 @@ RUN chmod -R 755 /app/node_modules
 # Gerar o Prisma Client para produção
 RUN npx prisma generate
 
-# Script de inicialização que executa migrations e inicia a aplicação (criar como root)
-RUN echo '#!/bin/sh\n\
-set -e\n\
-\n\
-echo "🔄 Aguardando PostgreSQL ficar disponível..."\n\
-until pg_isready -h postgres -p 5432 -U $POSTGRES_USER 2>/dev/null; do\n\
-  echo "Aguardando database..."\n\
-  sleep 2\n\
-done\n\
-\n\
-echo "🔄 Verificando se as migrações são necessárias..."\n\
-if npx prisma migrate status | grep -q "Database schema is not up to date"; then\n\
-  echo "🔄 Executando migrations do Prisma..."\n\
-  npx prisma migrate deploy\n\
-else\n\
-  echo "✅ Database já está atualizado com as migrações"\n\
-fi\n\
-\n\
-echo "🔄 Sincronizando schema do Prisma..."\n\
-npx prisma db push --accept-data-loss || echo "Schema já está sincronizado"\n\
-\n\
-echo "🚀 Iniciando aplicação..."\n\
-exec npm start' > /app/start.sh
-
-# Tornar o script executável e ajustar permissões
-RUN chmod +x /app/start.sh && chown nodeuser:nodejs /app/start.sh
+# Copiar e configurar script de inicialização
+COPY --chown=nodeuser:nodejs start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
 # Mudar para usuário não-root
 USER nodeuser
