@@ -70,8 +70,12 @@ COPY --chown=nodeuser:nodejs package.json ./
 RUN chown -R nodeuser:nodejs /app/node_modules
 RUN chmod -R 755 /app/node_modules
 
-# Gerar o Prisma Client para produção
+# Gerar o Prisma Client para produção como root para evitar problemas de permissão
 RUN npx prisma generate
+
+# Ajustar permissões do Prisma Client gerado
+RUN chown -R nodeuser:nodejs /app/node_modules/.prisma
+RUN chmod -R 755 /app/node_modules/.prisma
 
 # Copiar e configurar script de inicialização
 COPY --chown=nodeuser:nodejs start.sh /app/start.sh
