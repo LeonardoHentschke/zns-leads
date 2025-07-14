@@ -3,6 +3,7 @@ import fastify from "fastify";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 import fastifyCors from "@fastify/cors";
+import fastifyFormbody from "@fastify/formbody";
 
 import {
   serializerCompiler,
@@ -25,6 +26,7 @@ import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.register(fastifyCors);
+app.register(fastifyFormbody);
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
@@ -33,7 +35,7 @@ app.addHook("preHandler", requestLoggerHook);
 
 app.register(fastifySwagger, {
   swagger: {
-    consumes: ["application/json"],
+    consumes: ["application/json", "application/x-www-form-urlencoded"],
     produces: ["application/json"],
     info: {
       title: "Registro de leads - ZNS Advogados",
