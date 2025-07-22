@@ -7,6 +7,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   WEBHOOK_RETIRED_URL: z.string().url(),
   WEBHOOK_ATHLETES_RIGHTS_URL: z.string().url(),
+  LOG_REQUEST_BODY: z.enum(["true", "false"]).default("false").transform(val => val === "true"),
 });
 
 const _env = envSchema.safeParse(process.env);

@@ -19,6 +19,7 @@ import {
 
 import {
   createLeadAthletesRight,
+  createLeadAthletesRightFromForm,
   getLeadAthletesRightById,
 } from "./routes/athletes-rights";
 import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
@@ -60,6 +61,7 @@ app.register(fastifySwaggerUI, {
 });
 
 app.register(createLeadAthletesRight);
+app.register(createLeadAthletesRightFromForm);
 app.register(getLeadAthletesRightById);
 app.register(createLeadRetired);
 app.register(getLeadRetiredById);
