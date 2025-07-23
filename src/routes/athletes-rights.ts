@@ -95,7 +95,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
         const ip =
           typeof clientIp === "string" ? clientIp : clientIp?.[0] || null;
 
-        const pagesVisited = {
+        const metadata = {
           pageUrl: body["Page URL"],
           userAgent: body["User Agent"],
           date: body["Date"],
@@ -104,8 +104,6 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
           poweredBy: body["Powered by"],
           formId: body["form_id"],
           formName: body["form_name"],
-          injuryDate: injuryDate,
-          injuryClub: injuryClub,
         };
 
         if (env.LOG_REQUEST_BODY) {
@@ -119,7 +117,7 @@ export async function createLeadAthletesRight(app: FastifyInstance) {
             injury_date: injuryDate,
             injury_club: injuryClub,
             ip: ip,
-            metadata: pagesVisited,
+            metadata: metadata,
             webhook_sent: false,
           });
         }
