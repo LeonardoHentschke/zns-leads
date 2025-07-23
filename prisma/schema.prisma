@@ -23,7 +23,9 @@ model AthletesRights {
   clicked_whatsapp_button  Boolean?
   webhook_sent             Boolean?
   ip                       String?
-  pages_visited            Json?
+  injury_date              String?
+  injury_club              String?
+  metadata                 Json?
   created_at               DateTime @default(now())
   updated_at               DateTime @updatedAt
 
@@ -49,7 +51,7 @@ model Retired {
   device                   String?
   date_benefit_was_granted DateTime?
   webhook_sent             Boolean?
-  pages_visited            Json?
+  metadata                 Json?
   created_at               DateTime  @default(now())
   updated_at               DateTime  @updatedAt
 

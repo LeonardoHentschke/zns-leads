@@ -29,7 +29,7 @@ export async function createLeadRetired(app: FastifyInstance) {
           utm_term: z.string().optional(),
           ip: z.string().ip().optional(),
           device: z.string().optional(),
-          pages_visited: z.record(z.string(), z.string()).optional(),
+          metadata: z.record(z.string(), z.string()).optional(),
         }),
         response: {
           201: z.object({
@@ -52,7 +52,7 @@ export async function createLeadRetired(app: FastifyInstance) {
             date_benefit_was_granted: z.date().nullable(),
             created_at: z.date(),
             updated_at: z.date(),
-            pages_visited: z.any().nullable(),
+            metadata: z.any().nullable(),
           }),
         },
       },
@@ -90,7 +90,7 @@ export async function createLeadRetired(app: FastifyInstance) {
             ip: request.body.ip,
             device: request.body.device,
             date_benefit_was_granted: calculatedBenefitDate,
-            pages_visited: request.body.pages_visited,
+            metadata: request.body.metadata,
           },
         });
 
@@ -138,7 +138,7 @@ export async function getLeadRetiredById(app: FastifyInstance) {
             date_benefit_was_granted: z.date().nullable(),
             created_at: z.date(),
             updated_at: z.date(),
-            pages_visited: z.any().nullable(),
+            metadata: z.any().nullable(),
           }),
           404: z.object({
             message: z.string(),

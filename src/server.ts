@@ -17,11 +17,7 @@ import {
   errorLoggerHook,
 } from "./middleware/request-logger";
 
-import {
-  createLeadAthletesRight,
-  createLeadAthletesRightFromForm,
-  getLeadAthletesRightById,
-} from "./routes/athletes-rights";
+import { createLeadAthletesRight } from "./routes/athletes-rights";
 import { createLeadRetired, getLeadRetiredById } from "./routes/retired";
 
 export const app = fastify().withTypeProvider<ZodTypeProvider>();
@@ -61,8 +57,6 @@ app.register(fastifySwaggerUI, {
 });
 
 app.register(createLeadAthletesRight);
-app.register(createLeadAthletesRightFromForm);
-app.register(getLeadAthletesRightById);
 app.register(createLeadRetired);
 app.register(getLeadRetiredById);
 
